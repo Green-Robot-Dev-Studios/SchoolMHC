@@ -8,9 +8,8 @@
 		NavbarBrand,
 		Nav,
 		NavItem,
+    NavLink,
 	} from "sveltestrap";
-
-  import { Link } from "svelte-navigator";
 
   import { strings } from "../locale";
 
@@ -27,13 +26,13 @@
   <Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
     <Nav class="ml-auto" navbar>
       <NavItem>
-        <Link to="/" class="nav-link">{strings.navbar.home}</Link>
+        <NavLink href="#/">{strings.navbar.home}</NavLink>
       </NavItem>
       <NavItem>
-        <Link to="/chat" class="nav-link">{strings.navbar.chatNow}</Link>
+        <NavLink href="#/chat">{strings.navbar.chatNow}</NavLink>
       </NavItem>
       <NavItem>
-        <Link to="/about" class="nav-link">{strings.navbar.aboutUs}</Link>
+        <NavLink href="#/about">{strings.navbar.aboutUs}</NavLink>
       </NavItem>
     </Nav>
   </Collapse>
