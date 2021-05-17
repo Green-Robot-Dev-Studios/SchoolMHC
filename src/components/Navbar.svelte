@@ -20,7 +20,7 @@
   }
 </script>
 
-<Navbar color="primary" dark expand="md">
+<Navbar color="primary" dark expand="md" class="fixed-top">
   <NavbarBrand href="/">{strings.navbar.title}</NavbarBrand>
   <NavbarToggler on:click={() => (isOpen = !isOpen)} />
   <Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
@@ -34,6 +34,17 @@
       <NavItem>
         <NavLink href="#/about">{strings.navbar.aboutUs}</NavLink>
       </NavItem>
+      <NavItem>
+        <NavLink href="#/login">{strings.navbar.login}</NavLink>
+      </NavItem>
     </Nav>
   </Collapse>
 </Navbar>
+
+<style>
+  /* Fixes navbar hiding elements */
+  /* Bootstrap docs recommend this :| */
+  :global(body) {
+    padding-top: 60px;
+  }
+</style>

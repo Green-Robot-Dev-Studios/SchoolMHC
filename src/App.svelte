@@ -4,20 +4,17 @@
   import Chat from './components/Chat.svelte';
   import About from './components/About.svelte';
   import Navbar from "./components/Navbar.svelte";
+  import Login from "./components/Login.svelte";
   import NotFound from "./components/NotFound.svelte";
 
   const routes = {
     // Exact path
     '/': Home,
-
-    // Using named parameters, with last being optional
     '/chat': Chat,
-
-    // Wildcard parameter
     '/about': About,
+    '/login': Login,
 
     // Catch-all
-    // This is optional, but if present it must be the last
     '*': NotFound,
   }
 </script>
