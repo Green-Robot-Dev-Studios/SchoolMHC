@@ -1,3 +1,8 @@
 # SchoolMHC
 
-## A solution for schools to implement virtual mental health chatting between trained students and anonymous users.
+### A chat application that facilitates chat based anonymous mental health support, by students for students.
+
+### Things to change for a new school:
+- chat-animate.svg
+- locale.js
+- favicon.png

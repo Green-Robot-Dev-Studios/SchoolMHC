@@ -46,5 +46,6 @@
   /* Bootstrap docs recommend this :| */
   :global(body) {
     padding-top: 60px;
+    overflow-x: hidden;
   }
 </style>

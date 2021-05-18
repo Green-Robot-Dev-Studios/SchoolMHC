@@ -12,7 +12,7 @@
     <Jumbotron>
       <h1>{strings.jumbo.jumbo}</h1>
       <h3>{@html strings.jumbo.jumboSub}</h3>
-      <Button color="primary">{strings.jumbo.chatNow}</Button>
+      <Button color="primary" on:click={()=>location.href = "#/chat"}>{strings.jumbo.chatNow}</Button>
     </Jumbotron>
   </Col>
 </Row>
