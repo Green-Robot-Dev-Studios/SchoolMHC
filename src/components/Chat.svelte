@@ -4,9 +4,14 @@
   import "firebase/firestore";
   import "firebase/auth";
 
-  import { Jumbotron, Button, Row, Card, Container, InputGroup, Input, CardFooter, CardBody } from 'sveltestrap';
+  import { Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader, Jumbotron, Button, Row, Card, Container, InputGroup, Input, CardFooter, CardBody } from 'sveltestrap';
 
   import { strings } from "../locale"
+
+  import { pop } from 'svelte-spa-router';
   
   import { tick } from 'svelte';
 
@@ -42,9 +47,13 @@
   }
 
   // Signs out and redirects to homepage
+  async function signOut(auth) {
+    await auth.signOut();
+  }
+
   function leave(auth) {
     setTimeout(async ()=>{
-      await auth.signOut();
+      await signOut(auth);
       window.location.href = '#/';
     }, 3000);
   }
@@ -67,70 +76,82 @@
     </div>
 
     <!-- Signed in content -->
-    <Doc path={`users/${user.uid}`} let:ref={userRef} log>
-      <!-- Firebase is still loading -->
-      <div slot="loading">Loading...</div>
-
-      <!-- Creates anon account -->
-      <div slot="fallback">
-        Creating account...
-        {userRef.set({
-          isFinished: false, 
-          timeCreated: firebase.firestore.FieldValue.serverTimestamp() 
-        })}
-      </div>
-
-      <!-- Renders messages -->
-      <Collection 
-        path={userRef.collection('messages')}
-        query={ref => ref.orderBy("time")}
-        let:data={messages}
-        let:ref={messagesRef}
-        on:data={scroll}
-        log>
-      
+    {#if user.isAnonymous}
+      <Doc path={`users/${user.uid}`} let:ref={userRef} log>
+        <!-- Firebase is still loading -->
         <div slot="loading">Loading...</div>
-        <div slot="fallback">There was an error getting messages. Try refreshing.</div>
 
-        <div id="chat">
-
-          <Container class="text-center" id="leaveButton">
-            <Button color="danger" on:click={()=>leave(auth)}>Leave Chat</Button>
-          </Container>
-
-          <div id="messages" bind:this={scrollRef}>
-            {#each messages as msg}
-              <Card style="
-                border-bottom-{msg.person===1?'left':'right'}-radius: 0rem !important;
-                margin-left: {msg.person===1?'0':'auto'};
-              "
-              color="{msg.person===1?'primary':'secondary'}" 
-              inverse 
-              class="msg">
-                <CardBody>
-                  {msg.text}
-                </CardBody>
-                <CardFooter>{msg.time ? msg.time.toDate().toLocaleTimeString() : '...'}</CardFooter>
-              </Card>
-            {/each}
-          </div>
-
-          <Container id="sendbox">
-            <InputGroup>
-              <Input 
-                on:keyup={e=>e.key==="Enter" && send(msgInput, messagesRef, 0)} 
-                bind:value={msgInput} placeholder="Message">
-              </Input>
-              <div class="input-group-append">
-                <Button on:click={()=>send(msgInput, messagesRef, 0)}>Send</Button>
-              </div>
-            </InputGroup>
-          </Container>
-
+        <!-- Creates anon account -->
+        <div slot="fallback">
+          Creating account...
+          {userRef.set({
+            isFinished: false, 
+            timeCreated: firebase.firestore.FieldValue.serverTimestamp() 
+          })}
         </div>
-      </Collection>
-    </Doc>
 
+        <!-- Renders messages -->
+        <Collection 
+          path={userRef.collection('messages')}
+          query={ref => ref.orderBy("time")}
+          let:data={messages}
+          let:ref={messagesRef}
+          on:data={scroll}
+          log>
+        
+          <div slot="loading">Loading...</div>
+          <div slot="fallback">There was an error getting messages. Try refreshing.</div>
+
+          <div id="chat">
+
+            <Container class="text-center" id="leaveButton">
+              <Button color="danger" on:click={()=>leave(auth)}>Leave Chat</Button>
+            </Container>
+
+            <div id="messages" bind:this={scrollRef}>
+              {#each messages as msg}
+                <Card style="
+                  border-bottom-{msg.person===1?'left':'right'}-radius: 0rem !important;
+                  margin-left: {msg.person===1?'0':'auto'};
+                "
+                color="{msg.person===1?'primary':'secondary'}" 
+                inverse 
+                class="msg">
+                  <CardBody>
+                    {msg.text}
+                  </CardBody>
+                  <CardFooter>{msg.time ? msg.time.toDate().toLocaleTimeString() : '...'}</CardFooter>
+                </Card>
+              {/each}
+            </div>
+
+            <Container id="sendbox">
+              <InputGroup>
+                <Input 
+                  on:keyup={e=>e.key==="Enter" && send(msgInput, messagesRef, 0)} 
+                  bind:value={msgInput} placeholder="Message">
+                </Input>
+                <div class="input-group-append">
+                  <Button on:click={()=>send(msgInput, messagesRef, 0)}>Send</Button>
+                </div>
+              </InputGroup>
+            </Container>
+
+          </div>
+        </Collection>
+      </Doc>
+    {:else}
+      <Modal isOpen={true}>
+        <ModalHeader>Warning!</ModalHeader>
+        <ModalBody>
+          You are currently signed in as a helper.
+        </ModalBody>
+        <ModalFooter>
+          <Button color="danger" on:click={()=>signOut(auth)}>Sign me out</Button>
+          <Button color="secondary" on:click={pop}>Go back</Button>
+        </ModalFooter>
+      </Modal>
+    {/if}
   </User>
 </FirebaseApp>
 

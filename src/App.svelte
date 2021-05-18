@@ -5,6 +5,7 @@
   import About from './components/About.svelte';
   import Navbar from "./components/Navbar.svelte";
   import Login from "./components/Login.svelte";
+  import Dash from "./components/Dash.svelte";
   import NotFound from "./components/NotFound.svelte";
 
   import firebase from "firebase/app";
@@ -15,6 +16,7 @@
     '/chat': Chat,
     '/about': About,
     '/login': Login,
+    '/dash': Dash,
 
     // Catch-all
     '*': NotFound,

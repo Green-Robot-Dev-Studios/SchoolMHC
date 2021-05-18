@@ -8,7 +8,7 @@ export var strings = {
     home: `Home`,
     chatNow: `Chat Now`,
     aboutUs: `About Us`,
-    login: `Helper Login`,
+    login: `Helper Zone`,
   },
   jumbo: {
     jumbo: `Welcome to ${chatName}!`,
