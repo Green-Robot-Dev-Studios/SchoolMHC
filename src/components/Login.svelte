@@ -18,6 +18,9 @@
 
   let email, pass;
 
+  let open = false, error;
+  const toggle = () => (open = !open);
+
   function signOut(auth) {
     auth.signOut();
   }
@@ -26,7 +29,8 @@
     try {
       var res = await auth.signInWithEmailAndPassword(email, pass);
     } catch (err) {
-      alert(err);
+      error = err;
+      open = true;
     }
   }
 </script>
@@ -35,6 +39,17 @@
   <User let:user let:auth>
     <!-- Prompt user with sign in page -->
     <div slot="signed-out" class="text-center" style="display: flex; height: 100%;">
+      <Modal isOpen={open} {toggle}>
+        <ModalHeader>Warning!</ModalHeader>
+        <ModalBody>
+          {error}
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" on:click={toggle}>Ok</Button>
+          <Button color="secondary" on:click={toggle}>Close</Button>
+        </ModalFooter>
+      </Modal>
+
       <div id="form">
         <img src="./favicon.png" alt="School Icon"/>
         <h3>Please Sign In</h3>

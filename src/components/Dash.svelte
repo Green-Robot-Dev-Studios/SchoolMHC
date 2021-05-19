@@ -1,0 +1,35 @@
+<script>
+  import { FirebaseApp, User, Doc, Collection } from "sveltefire";
+  import firebase from "firebase/app";
+  import "firebase/firestore";
+  import "firebase/auth";
+
+  import { Column, Table } from 'sveltestrap';
+</script>
+
+<FirebaseApp {firebase}>
+  <User let:user let:auth>
+    <Collection 
+      path="/users" 
+      query={ref => ref.orderBy("timeCreated")}
+      let:data={threads}
+      let:ref={threadsRef}>
+
+      <Table rows={threads} let:row striped>
+        <Column header="#" width="8rem">
+          {row}
+          {console.log(row)}
+        </Column>
+        <Column header="Time Created" width="8rem">
+          {row.timeCreated ? row.timeCreated.toDate().toLocaleString() : "..."}
+        </Column>
+        <Column header="Is Chatting" width="8rem">
+          {row.isFinished ? "✅" : "❌"}
+        </Column>
+        <Column header="Link" width="8rem">
+          <a href="">Link</a>
+        </Column>
+      </Table>
+    </Collection>
+  </User>
+</FirebaseApp>

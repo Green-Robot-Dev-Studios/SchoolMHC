@@ -6,3 +6,7 @@
 - chat-animate.svg
 - locale.js
 - favicon.png
+
+### TODO:
+- prettier
+- implement helper page

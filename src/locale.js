@@ -12,7 +12,7 @@ export var strings = {
   },
   jumbo: {
     jumbo: `Welcome to ${chatName}!`,
-    jumboSub: `Mental health chat.<br><i>By students, for students.</i>`,
+    jumboSub: `Peers helping peers.<br><i>By students, for students.</i>`,
     chatNow: `Chat now`,
   },
   chat: {

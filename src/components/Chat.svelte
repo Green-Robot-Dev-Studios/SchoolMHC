@@ -7,7 +7,16 @@
   import { Modal,
     ModalBody,
     ModalFooter,
-    ModalHeader, Jumbotron, Button, Row, Card, Container, InputGroup, Input, CardFooter, CardBody } from 'sveltestrap';
+    ModalHeader, 
+    Jumbotron, 
+    Button, 
+    Row, 
+    Card, 
+    Container, 
+    InputGroup, 
+    Input, 
+    CardFooter, 
+    CardBody } from 'sveltestrap';
 
   import { strings } from "../locale"
 
