@@ -24,17 +24,25 @@
   
   import { tick } from 'svelte';
 
+  export let params;
+  console.log(params);
+
   // msgInput is synced to chat field's value
   // scrollRef is a reference to the chat
   let msgInput, scrollRef;
 
   // Sends message
-  function send(msg, ref, person) {
+  async function send(msg, ref, isAnon, userData, userRef) {
     if (msg === "") {
       return;
     }
+    if (!userData.isChatting && !isAnon) {
+      await userRef.update({
+        isChatting: true
+      });
+    }
     ref.doc().set({
-      person: person,
+      person: isAnon ? 0 : 1,
       text: msg,
       time: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -63,7 +71,7 @@
   function leave(auth) {
     setTimeout(async ()=>{
       await signOut(auth);
-      window.location.href = '#/';
+      pop();
     }, 3000);
   }
 </script>
@@ -85,8 +93,8 @@
     </div>
 
     <!-- Signed in content -->
-    {#if user.isAnonymous}
-      <Doc path={`users/${user.uid}`} let:ref={userRef} log>
+    {#if user.isAnonymous || params.u == 1}
+      <Doc path={params.t ? `users/${params.t}` : `users/${user.uid}`} let:data={userData} let:ref={userRef} log>
         <!-- Firebase is still loading -->
         <div slot="loading">Loading...</div>
 
@@ -94,7 +102,8 @@
         <div slot="fallback">
           Creating account...
           {userRef.set({
-            isFinished: false, 
+            isFinished: false,
+            isChatting: false,
             timeCreated: firebase.firestore.FieldValue.serverTimestamp() 
           })}
         </div>
@@ -114,16 +123,16 @@
           <div id="chat">
 
             <Container class="text-center" id="leaveButton">
-              <Button color="danger" on:click={()=>leave(auth)}>Leave Chat</Button>
+              <Button color="danger" on:click={()=>params.u ? pop() : leave(auth)}>Leave Chat</Button>
             </Container>
 
             <div id="messages" bind:this={scrollRef}>
               {#each messages as msg}
                 <Card style="
-                  border-bottom-{msg.person===1?'left':'right'}-radius: 0rem !important;
-                  margin-left: {msg.person===1?'0':'auto'};
+                  border-bottom-{msg.person==user.isAnonymous?'left':'right'}-radius: 0rem !important;
+                  margin-left: {msg.person==user.isAnonymous?'0':'auto'};
                 "
-                color="{msg.person===1?'primary':'secondary'}" 
+                color="{msg.person==user.isAnonymous?'primary':'secondary'}" 
                 inverse 
                 class="msg">
                   <CardBody>
@@ -137,11 +146,11 @@
             <Container id="sendbox">
               <InputGroup>
                 <Input 
-                  on:keyup={e=>e.key==="Enter" && send(msgInput, messagesRef, 0)} 
+                  on:keyup={e=>e.key==="Enter" && send(msgInput, messagesRef, user.isAnonymous, userData, userRef)} 
                   bind:value={msgInput} placeholder="Message">
                 </Input>
                 <div class="input-group-append">
-                  <Button on:click={()=>send(msgInput, messagesRef, 0)}>Send</Button>
+                  <Button on:click={()=>send(msgInput, messagesRef, user.isAnonymous, userData, userRef)}>Send</Button>
                 </div>
               </InputGroup>
             </Container>

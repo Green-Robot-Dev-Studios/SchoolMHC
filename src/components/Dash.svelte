@@ -16,18 +16,17 @@
       let:ref={threadsRef}>
 
       <Table rows={threads} let:row striped>
-        <Column header="#" width="8rem">
-          {row}
-          {console.log(row)}
-        </Column>
         <Column header="Time Created" width="8rem">
           {row.timeCreated ? row.timeCreated.toDate().toLocaleString() : "..."}
         </Column>
         <Column header="Is Chatting" width="8rem">
+          {row.isChatting ? "✅" : "❌"}
+        </Column>
+        <Column header="Is Finished" width="8rem">
           {row.isFinished ? "✅" : "❌"}
         </Column>
         <Column header="Link" width="8rem">
-          <a href="">Link</a>
+          <a href="#/chat/1/{row.id}">Link</a>
         </Column>
       </Table>
     </Collection>

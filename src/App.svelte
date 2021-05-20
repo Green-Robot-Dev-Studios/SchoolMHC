@@ -13,7 +13,7 @@
   const routes = {
     // Exact path
     '/': Home,
-    '/chat': Chat,
+    '/chat/:u?/:t?': Chat,
     '/about': About,
     '/login': Login,
     '/dash': Dash,
