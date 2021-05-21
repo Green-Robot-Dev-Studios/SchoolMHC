@@ -32,3 +32,10 @@
     </Collection>
   </User>
 </FirebaseApp>
+
+<style>
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+</style>

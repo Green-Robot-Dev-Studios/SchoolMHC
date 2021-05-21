@@ -20,7 +20,7 @@
 
   import { strings } from "../locale"
 
-  import { pop } from 'svelte-spa-router';
+  import { pop, push, replace } from 'svelte-spa-router';
   
   import { tick } from 'svelte';
 
@@ -30,6 +30,9 @@
   // msgInput is synced to chat field's value
   // scrollRef is a reference to the chat
   let msgInput, scrollRef;
+
+  let open = false;
+  const toggle = () => (open = !open);
 
   // Sends message
   async function send(msg, ref, isAnon, userData, userRef) {
@@ -69,10 +72,27 @@
   }
 
   function leave(auth) {
+    console.log("Leaving chat as anon")
     setTimeout(async ()=>{
       await signOut(auth);
-      pop();
+      await push("/");
+      console.log("Leaving")
     }, 3000);
+  }
+
+  async function endRoom(userRef) {
+    await userRef.update({
+      isFinished: true
+    });
+  }
+
+  function roomEnded(userData, isAnon, auth) {
+    if (userData?.isFinished) {
+      toggle();
+      if (isAnon) {
+        leave(auth);
+      }
+    }
   }
 </script>
 
@@ -94,7 +114,11 @@
 
     <!-- Signed in content -->
     {#if user.isAnonymous || params.u == 1}
-      <Doc path={params.t ? `users/${params.t}` : `users/${user.uid}`} let:data={userData} let:ref={userRef} log>
+      <Doc path={params.t ? `users/${params.t}` : `users/${user.uid}`} 
+        let:data={userData} 
+        let:ref={userRef} 
+        on:data={(e)=>roomEnded(e.detail.data, user.isAnonymous, auth)}
+        log>
         <!-- Firebase is still loading -->
         <div slot="loading">Loading...</div>
 
@@ -108,6 +132,18 @@
           })}
         </div>
 
+        <!-- Conditionally render room end message -->
+        <!-- Fade must be false due to component update cycle. TODO: better fix -->
+        <Modal fade={false} isOpen={open} {toggle}>
+          <ModalHeader>Warning!</ModalHeader>
+          <ModalBody>
+            This chat is finished. {user.isAnonymous ? "You are being redirected back." : ""}
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" on:click={toggle}>Ok</Button>
+          </ModalFooter>
+        </Modal>
+        
         <!-- Renders messages -->
         <Collection 
           path={userRef.collection('messages')}
@@ -121,11 +157,15 @@
           <div slot="fallback">There was an error getting messages. Try refreshing.</div>
 
           <div id="chat">
-
-            <Container class="text-center" id="leaveButton">
-              <Button color="danger" on:click={()=>params.u ? pop() : leave(auth)}>Leave Chat</Button>
+            <!-- Leave chat and end chat button -->
+            <Container class="text-center">
+              <Button color="danger" on:click={()=>params.u ? pop() : toggle() && leave(auth)}>Leave Chat</Button>
+              {#if params.u == 1 && !userData.isFinished}
+                <Button color="danger" on:click={()=>endRoom(userRef)}>End Chat</Button>
+              {/if}
             </Container>
 
+            <!-- Render message cards -->
             <div id="messages" bind:this={scrollRef}>
               {#each messages as msg}
                 <Card style="
@@ -143,6 +183,7 @@
               {/each}
             </div>
 
+            <!-- Render message box -->
             <Container id="sendbox">
               <InputGroup>
                 <Input 
@@ -159,6 +200,7 @@
         </Collection>
       </Doc>
     {:else}
+      <!-- Modal in the event of a logged in helper clicking chat now -->
       <Modal isOpen={true}>
         <ModalHeader>Warning!</ModalHeader>
         <ModalBody>
@@ -186,6 +228,11 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+  }
+
+  /* Fix utterly moronic code by bootstrap */
+  :global(.modal-open) {
+    overflow: unset !important;
   }
 
   :global(.card-body) {
