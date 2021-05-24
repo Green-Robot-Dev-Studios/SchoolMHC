@@ -24,6 +24,9 @@
   
   import { tick } from 'svelte';
 
+  import animals from '../animals';
+  import adjectives from '../adjectives';
+
   export let params;
   console.log(params);
 
@@ -94,6 +97,11 @@
       }
     }
   }
+
+  function choose(choices) {
+    var index = Math.floor(Math.random() * choices.length);
+    return choices[index];
+  }
 </script>
 
 <FirebaseApp {firebase}>
@@ -128,6 +136,7 @@
           {userRef.set({
             isFinished: false,
             isChatting: false,
+            name: choose(adjectives) + " " + choose(animals),
             timeCreated: firebase.firestore.FieldValue.serverTimestamp() 
           })}
         </div>

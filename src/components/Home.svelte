@@ -16,3 +16,27 @@
     </Jumbotron>
   </Col>
 </Row>
+<Row>
+  <div id="footer" class="text-center">
+    © 2021 Copyright: GRDS
+    <br>
+    Illustrations by <a href="https://storyset.com/">Freepik Storyset</a>
+  </div>
+</Row>
+
+<style>
+  #footer {
+    background-color: rgba(0, 0, 0, 0.05);
+    width: 100%;
+  }
+
+  :global(.row) {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+  }
+
+  :global(body) {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+</style>

@@ -4,7 +4,11 @@
   import "firebase/firestore";
   import "firebase/auth";
 
-  import { Column, Table } from 'sveltestrap';
+  import { Button, Column, Table } from 'sveltestrap';
+
+  function remove(id, ref) {
+    ref.doc(id).delete();
+  }
 </script>
 
 <FirebaseApp {firebase}>
@@ -15,7 +19,11 @@
       let:data={threads}
       let:ref={threadsRef}>
 
-      <Table rows={threads} let:row striped>
+      <!-- ID does not work with svelte reactiveness -->
+      <!-- <Table rows={threads} let:row striped responsive>
+        <Column header="Identifier" width="8rem">
+          {row.name ? row.name : "No Name"}
+        </Column>
         <Column header="Time Created" width="8rem">
           {row.timeCreated ? row.timeCreated.toDate().toLocaleString() : "..."}
         </Column>
@@ -28,7 +36,36 @@
         <Column header="Link" width="8rem">
           <a href="#/chat/1/{row.id}">Link</a>
         </Column>
+        <Column header="Delete" width="8rem">
+          <Button color="danger" on:click={()=>remove(row.id, threadsRef)}>Delete</Button>
+        </Column>
+      </Table> -->
+
+      <Table striped responsive>
+        <thead>
+          <tr>
+            <th>Identifier</th>
+            <th>Time Created</th>
+            <th>Is Chatting</th>
+            <th>Is Finished</th>
+            <th>Link</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each threads as row (row.id)}
+            <tr>
+              <th scope="row">{row.name ? row.name : "No Name"}</th>
+              <td>{row.timeCreated ? row.timeCreated.toDate().toLocaleString() : "..."}</td>
+              <td>{row.isChatting ? "✅" : "❌"}</td>
+              <td>{row.isFinished ? "✅" : "❌"}</td>
+              <td><a href="#/chat/1/{row.id}">Link</a></td>
+              <td><Button color="danger" on:click={()=>remove(row.id, threadsRef)}>Delete</Button></td>
+            </tr>
+          {/each}
+        </tbody>
       </Table>
+
     </Collection>
   </User>
 </FirebaseApp>

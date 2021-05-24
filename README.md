@@ -7,6 +7,6 @@
 - locale.js
 - favicon.png
 
-### TODO:
-- prettier
-- implement helper page
+### Procedure:
+- npm run build
+- node ./scripts/gh-pages
