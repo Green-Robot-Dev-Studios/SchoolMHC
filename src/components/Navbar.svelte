@@ -31,9 +31,10 @@
       <NavItem>
         <NavLink href="#/chat">{strings.navbar.chatNow}</NavLink>
       </NavItem>
-      <NavItem>
+      <!-- To be implemented -->
+      <!-- <NavItem>
         <NavLink href="#/about">{strings.navbar.aboutUs}</NavLink>
-      </NavItem>
+      </NavItem> -->
       <NavItem>
         <NavLink href="#/login">{strings.navbar.login}</NavLink>
       </NavItem>
